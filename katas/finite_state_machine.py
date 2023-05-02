@@ -127,6 +127,7 @@ my_automaton_best = AutomatonBest()
 class TestKata(unittest.TestCase):
     def test_function(self):
         self.assertEqual(my_automaton.read_commands(["1"]), True)
+        self.assertEqual(my_automaton.read_commands(["0"]), False)
         self.assertEqual(my_automaton.read_commands(["1", "0", "0", "1"]), True)
         self.assertEqual(my_automaton.read_commands(['1', '0', '0', '1', '0', '0']), True)
 
