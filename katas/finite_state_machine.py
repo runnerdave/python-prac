@@ -2,7 +2,7 @@
 
 import unittest
 
-# https://www.codewars.com/kata/5268acac0d3f019add000203/train/python   
+# https://www.codewars.com/kata/5268acac0d3f019add000203/train/python
 #
 # Create a finite automaton that has three states. Finite automatons are the same as finite state machines for our purposes.
 
@@ -19,10 +19,10 @@ import unittest
 
 # Your task
 
-# You will have to design your state objects, and how your Automaton handles transitions. Also make sure you set up the three states, q1, q2, and q3 for the myAutomaton instance. 
+# You will have to design your state objects, and how your Automaton handles transitions. Also make sure you set up the three states, q1, q2, and q3 for the myAutomaton instance.
 # The test fixtures will be calling against myAutomaton.
 
-# As an aside, the automaton accepts an array of strings, rather than just numbers, or a number represented as a string, 
+# As an aside, the automaton accepts an array of strings, rather than just numbers, or a number represented as a string,
 # because the language an automaton can accept isn't confined to just numbers. An automaton should be able to accept any 'symbol.'
 
 # Here are some resources on DFAs (the automaton this Kata asks you to create):
@@ -46,12 +46,13 @@ import unittest
 
 # We end in q3 which is not our accept state, so we return false
 
+
 class Automaton(object):
 
     def __init__(self):
         self.states = {
-            'q1': self.q1,#start state
-            'q2': self.q2,#accept state
+            'q1': self.q1,  # start state
+            'q2': self.q2,  # accept state
             'q3': self.q3
         }
         self.current_state = self.q1
@@ -60,7 +61,7 @@ class Automaton(object):
         if command:
             return self.states['q2']
         return self.states['q1']
-    
+
     def q2(self, command):
         if command:
             return self.states['q2']
@@ -70,11 +71,12 @@ class Automaton(object):
         return self.states['q2']
 
     def read_commands(self, commands):
-        for step in commands:   
+        for step in commands:
             self.current_state = self.current_state(int(step))
         # Return True if we end in our accept state, False otherwise
         return self.current_state == self.states['q2']
-    
+
+
 class AutomatonGPT(object):
 
     def __init__(self):
@@ -84,10 +86,10 @@ class AutomatonGPT(object):
             'q3': self.q3
         }
         self.current_state = self.q1
-    
+
     def q1(self, command):
         return self.states['q2'] if command else self.states['q1']
-    
+
     def q2(self, command):
         return self.states['q2'] if command else self.states['q3']
 
@@ -98,15 +100,15 @@ class AutomatonGPT(object):
         for step in commands:
             # Call the current state function with the current input
             self.current_state = self.current_state(int(step))
-        
+
         # Return True if we end in our accept state (q2), False otherwise
         return self.current_state == self.states['q2']
-    
+
 
 class AutomatonBest(object):
 
     def __init__(self):
-        self.automata = {('q1', '1'): 'q2', ('q1', '0'): 'q1', 
+        self.automata = {('q1', '1'): 'q2', ('q1', '0'): 'q1',
                          ('q2', '0'): 'q3', ('q2', '1'): 'q2',
                          ('q3', '0'): 'q2', ('q3', '1'): 'q2'}
         self.state = "q1"
@@ -114,7 +116,7 @@ class AutomatonBest(object):
     def read_commands(self, commands):
         for c in commands:
             self.state = self.automata[(self.state, c)]
-        return self.state=="q2"
+        return self.state == "q2"
 
 
 my_automaton = Automaton()
@@ -125,11 +127,17 @@ my_automaton_best = AutomatonBest()
 
 # TESTS
 class TestKata(unittest.TestCase):
+    tests = [
+        [["1"], True],
+        [["0"], False],
+        [["1", "0", "0", "1"], True],
+        [['1', '0', '0', '1', '0', '0'], True],
+    ]
+
     def test_function(self):
-        self.assertEqual(my_automaton.read_commands(["1"]), True)
-        self.assertEqual(my_automaton.read_commands(["0"]), False)
-        self.assertEqual(my_automaton.read_commands(["1", "0", "0", "1"]), True)
-        self.assertEqual(my_automaton.read_commands(['1', '0', '0', '1', '0', '0']), True)
+        for i, test in enumerate(self.tests):
+            self.assertEqual(my_automaton.read_commands(test[0]),
+                             test[1], f'test {i}, value{test[0]} failed')
 
 if __name__ == '__main__':
     unittest.main()
