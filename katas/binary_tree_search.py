@@ -23,17 +23,14 @@ def search(n: int, root: Optional[Node]) -> bool:
         return False
     if root.value == n:
         return True
-    elif root.value < n:
-        return search(n, root.left)
-    else:
-        return search(n, root.right)
+    return search(n, root.left) or search(n, root.right)
 
 # TESTS
 class TestKata(unittest.TestCase):
     tests = [
         [(666, None), False],
         [(444, Node(666, Node(555), Node(444))), True],
-        # [(555, Node(666, Node(555), Node(444))), True],
+        [(555, Node(666, Node(555), Node(444))), True],
         [(666, Node(666, Node(555), Node(444))), True],
         [(777, Node(666, Node(555), Node(444))), False],
     ]  
