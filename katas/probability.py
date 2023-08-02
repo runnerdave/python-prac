@@ -175,7 +175,7 @@ class TestStats(unittest.TestCase):
         self.assertEqual(res, result)
 
         distrib = [[0.0, 0.125], [1.0, 0.375], [2.0, 0.375], [3, 0.125]]
-        res = stats_disc_distr_best(distrib)
+        res = stats_disc_distr_chatgpt(distrib)
         result = [1.5, 0.75, 0.8660254037844386]
         self.assertEqual(res, result)
 
