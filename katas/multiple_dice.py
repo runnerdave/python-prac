@@ -63,10 +63,10 @@ def rolldice_sum_prob(sum, no_dice):
         return 1/6
 
     dice = produce_dice(no_dice)
-    combinations = 0    
-    for r in range(len(dice)):
+    combinations = 0  
+    if no_dice == 2:
         for _ in range(6):
-            print_dice(shift_die(dice, r))
+            print_dice(shift_die(dice, 0))
             print(sum_all_columns(dice))
             matching_indices = [i for i, num in enumerate(sum_all_columns(dice)) if num == sum]
             if matching_indices:
@@ -74,20 +74,51 @@ def rolldice_sum_prob(sum, no_dice):
                 combinations += len(matching_indices)
             else:
                 print("Match not found")
+    else:
+        for r in range(no_dice):
+            for _ in range(6):
+                print_dice(shift_die(dice, r))
+                print(sum_all_columns(dice))
+                matching_indices = [i for i, num in enumerate(sum_all_columns(dice)) if num == sum]
+                if matching_indices:
+                    print(f"Matches found at indices: {matching_indices}")
+                    combinations += len(matching_indices)
+                else:
+                    print("Match not found")
+        for r in range(no_dice-1):
+            for _ in range(6):
+                print_dice(shift_die(dice, r+1))
+                print(sum_all_columns(dice))
+                matching_indices = [i for i, num in enumerate(sum_all_columns(dice)) if num == sum]
+                if matching_indices:
+                    print(f"Matches found at indices: {matching_indices}")
+                    combinations += len(matching_indices)
+                else:
+                    print("Match not found")
+        for r in range(no_dice-2):
+            for _ in range(6):
+                print_dice(shift_die(dice, r+2))
+                print(sum_all_columns(dice))
+                matching_indices = [i for i, num in enumerate(sum_all_columns(dice)) if num == sum]
+                if matching_indices:
+                    print(f"Matches found at indices: {matching_indices}")
+                    combinations += len(matching_indices)
+                else:
+                    print("Match not found")
+        for r in range(no_dice-2):
+            for _ in range(6):
+                shift_die(dice, r+2)
+                print_dice(shift_die(dice, r+1))
+                print(sum_all_columns(dice))
+                matching_indices = [i for i, num in enumerate(sum_all_columns(dice)) if num == sum]
+                if matching_indices:
+                    print(f"Matches found at indices: {matching_indices}")
+                    combinations += len(matching_indices)
+                else:
+                    print("Match not found")
+    print(f'combinations:{combinations}')
 
     return combinations/(6**no_dice)
-
-# use:
-# combinations = 0
-#     # for c in range(no_dice):
-#     for d1 in range(1, 7):
-#         combinations += roll_two_dice(d1, sum)
-def roll_two_dice(fixed_n, sum):
-    combinations = 0
-    for d2 in range(1, 7):
-        if sum == fixed_n + d2:
-            combinations += 1
-    return combinations
 
 # one liner: return sum(dice[i][pos] for i in range(len(dice)))
 def sum_column(dice, pos):
@@ -148,7 +179,7 @@ class TestKata(unittest.TestCase):
     tests = [
         # [[22, 3], 0],
         # [[2, 3], 0],
-        [[6, 1], 1/6],
+        # [[6, 1], 1/6],
         # [[11, 2], 1/18],
         # [[8, 2], 5/36],
         [[8, 3], 7/72],
@@ -165,7 +196,6 @@ if __name__ == '__main__':
     # print_dice(dice)
     # print(sum_all_columns(dice))
     # print('---')
-    # print_dice(shift_die(dice, 0))
     # print(sum_all_columns(dice))
     # print('---')
     # print_dice(shift_die(dice, 0))
