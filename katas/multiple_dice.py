@@ -120,6 +120,19 @@ def rolldice_sum_prob(sum, no_dice):
 
     return combinations/(6**no_dice)
 
+def run_combinations(dice, pos):
+    combinations = 0 
+    for _ in range(6):
+        print_dice(shift_die(dice, pos))
+        print(sum_all_columns(dice))
+        matching_indices = [i for i, num in enumerate(sum_all_columns(dice)) if num == sum]
+        if matching_indices:
+            print(f"Matches found at indices: {matching_indices}")
+            combinations += len(matching_indices)
+        else:
+            print("Match not found")
+    return combinations
+
 # one liner: return sum(dice[i][pos] for i in range(len(dice)))
 def sum_column(dice, pos):
     sum = 0
