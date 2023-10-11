@@ -1,5 +1,7 @@
 # main.py
 
+from datetime import datetime
+
 Legajo = [5001, 5002, 5003, 5004, 5005, 5006, 5007, 5008, 5009,
           5010, 5011, 5012, 5013, 5014, 5015, 5016, 5017, 5018, 5019]
 Apellido = ["HALLE SAIN", "GHAMEN AHMED", "García", "VELAZQUEZ", "PEREIRA", "CATCOF", "RAMIREZ SUAREZ", "HEREDIA", "Rocatagliata",
@@ -21,6 +23,14 @@ A_O_soc = 0.03
 A_Sind = 0.03
 A_ley1254 = 0.015
 
+def count_years_from_date(date: str):
+    input_date = datetime.strptime(date, "%d/%m/%Y")
+    current_date = datetime.now()
+    years_difference = current_date.year - input_date.year
+
+    if (current_date.month, current_date.day) < (input_date.month, input_date.day):
+        years_difference -= 1
+    return years_difference
 
 def list_by_legajo_no(no: int):
     try:
@@ -30,7 +40,7 @@ def list_by_legajo_no(no: int):
         space = "    "
         header = f"Legajo{space}Apellido{space}Nombre{space}Obra Social{space}Planta{space}Puesto{space}Sueldos B{space}Antigüedad en Años"
         separator = ''.join(["_" for _ in range(100)])
-        values = f"{Legajo[i]}{space}{space}{Apellido[i]}{space}{Nombre[i]}{space}{Obra_Social[i]}{space}{space} {Planta[i]}{space} {sueldo[i]}{space}{sueldo[i+1]}"
+        values = f"{Legajo[i]}{space}{space}{Apellido[i]}{space}{Nombre[i]}{space}{Obra_Social[i]}{space}{space} {Planta[i]}{space} {sueldo[i]}{space}{sueldo[i+1]}{space}{space}{count_years_from_date(Fecha_Ing[i])}"
         return header + "\n" + separator + "\n" + values
     except ValueError:
         print(f"El legajo {no} no esta en la lista.")
