@@ -1,4 +1,6 @@
+from datetime import datetime
 import pandas as pd
+from tabulate import tabulate
 
 # Provided lists
 Legajo = [5001, 5002, 5003, 5004, 5005, 5006, 5007, 5008, 5009, 5010, 5011, 5012, 5013, 5014, 5015, 5016, 5017, 5018, 5019]
@@ -16,6 +18,10 @@ Puesto = ["Administrativo", "Ventas", "Ventas", "Recursos", "Ventas", "Cadete", 
           "Administrativo", "Diseño", "Diseño", "Ventas", "Recursos", "Ventas", "Administrativo", "Administrativo", "Jefe de Sector"]
 sueldo = ["Cadete", 275000, "Ventas", 248000, "Administrativo", 301000,
           "Diseño", 364000, "Jefe de Sector", 443000, "Recursos", 287000, "Ingeniería", 300000]
+A_Jub = 0.11
+A_O_soc = 0.03
+A_Sind = 0.03
+A_ley1254 = 0.015
 
 sueldo_dict = {sueldo[i]: sueldo[i + 1] for i in range(0, len(sueldo), 2)}
 
@@ -40,3 +46,100 @@ df = pd.DataFrame(data)
 
 # Display the DataFrame
 print(df)
+
+
+def get_row_by_legajo(legajo):
+    """
+    Get the row of the DataFrame based on the Legajo.
+
+    Parameters:
+    - legajo: int, the Legajo to search for.
+
+    Returns:
+    - pandas.Series or None: The row of the DataFrame if found, otherwise None.
+    """
+    row = df[df['Legajo'] == legajo]
+    if not row.empty:
+        return row.iloc[0]  # Return the first row (there should be only one)
+    else:
+        return None
+    
+def get_row_by_planta(planta):
+    """
+    Get the row of the DataFrame based on the Planta.
+
+    Parameters:
+    - planta: int, the Planta to search for.
+
+    Returns:
+    - pandas.Series or None: The row of the DataFrame if found, otherwise None.
+    """
+    result_df = df[df['Planta'] == planta]
+    if not result_df.empty:
+        return result_df
+    else:
+        return None
+    
+def get_row_by_year(year):
+    """
+    Get the row of the DataFrame based on the Fecha_Ing.
+
+    Parameters:
+    - year: int, the Fecha_Ing to search for.
+
+    Returns:
+    - pandas.Series or None: The row of the DataFrame if found, otherwise None.
+    """
+    # Extract the year from 'Fecha_Ing' column
+    df['Year'] = pd.to_datetime(df['Fecha_Ing'], format='%d/%m/%Y').dt.year
+
+    # Filter by the specified year
+    result_df = df[df['Year'] == year].copy()
+
+    # Drop the temporary 'Year' column
+    result_df.drop(columns=['Year'], inplace=True)
+
+    if not result_df.empty:
+        return result_df
+    else:
+        return None
+    
+def modify_fecha_ing(df):
+    """
+    Modify the 'Fecha_Ing' column to represent the age in years relative to the current date.
+
+    Parameters:
+    - df: pandas.DataFrame, the DataFrame to modify.
+
+    Returns:
+    - pandas.DataFrame: The modified DataFrame.
+    """
+    # Convert 'Fecha_Ing' to datetime
+    df['Fecha_Ing'] = pd.to_datetime(df['Fecha_Ing'], format='%d/%m/%Y')
+
+    # Calculate age in years relative to the current date
+    current_date = datetime.now()
+    df['Antigüedad en Años'] = (current_date - df['Fecha_Ing']).dt.days // 365  # Approximate age in years
+
+    return df
+    
+print("legajo 5003")
+result_row = get_row_by_legajo(5003)
+result_df = pd.DataFrame(result_row).transpose()
+modify_fecha_ing(result_df)
+result_df.drop(columns=['Fecha_Ing'], inplace=True)
+print(tabulate(result_df, headers='keys', tablefmt='pretty', showindex=False))
+
+print("planta Pilar")
+result_df = get_row_by_planta("Pilar")
+with pd.option_context('mode.chained_assignment', None):
+    result_df['jubilacion'] = result_df['sueldo']*A_Jub
+    result_df['obra social'] = result_df['sueldo']*A_O_soc
+    result_df['Ley'] = result_df['sueldo']*A_ley1254
+    result_df['Sueldo neto'] = result_df['sueldo']-result_df['jubilacion']-result_df['obra social']-result_df['Ley']
+print(tabulate(result_df, headers='keys', tablefmt='pretty', showindex=False))
+
+print("año 1990")
+result_df = get_row_by_year(1990)
+print(tabulate(result_df, headers='keys', tablefmt='pretty', showindex=False))
+
