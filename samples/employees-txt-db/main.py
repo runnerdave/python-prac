@@ -23,16 +23,31 @@ A_O_soc = 0.03
 A_Sind = 0.03
 A_ley1254 = 0.015
 
-# convierto la lista de sueldo a un diccionario para facilitar la busqueda
-sueldo_dict = {sueldo[i]: sueldo[i + 1] for i in range(0, len(sueldo), 2)}
+# IMPORTANTE: Ingenieria no tenia sueldo asi que le fue asignado un valor similar a los otros
+
+# Convierto la lista de sueldo a un diccionario para facilitar la busqueda
+sueldo_dict = {}
+# Utilizo un bucle for con un paso de 2 para recorrer los elementos en posiciones pares
+for i in range(0, len(sueldo), 2):
+    # sueldo[i] es la clave (posición par), sueldo[i + 1] es el valor (posición impar)
+    sueldo_dict[sueldo[i]] = sueldo[i + 1]
+
 
 def count_years_from_date(date: str):
+    # Convierto la cadena de fecha en un objeto datetime usando el formato especificado
     input_date = datetime.strptime(date, "%d/%m/%Y")
+    
+    # Obtengo la fecha actual
     current_date = datetime.now()
+    
+    # Calcula la diferencia de años entre la fecha actual y la fecha de entrada
     years_difference = current_date.year - input_date.year
-
+    
+    # Ajusta la diferencia si la fecha actual (mes, día) es anterior a la fecha de entrada (mes, día)
     if (current_date.month, current_date.day) < (input_date.month, input_date.day):
         years_difference -= 1
+    
+    # Retorna la diferencia de años
     return years_difference
 
 
@@ -40,12 +55,17 @@ def list_by_legajo_no(no: int):
     try:
         # obtengo el indice en el legajo
         i = Legajo.index(int(no))
-        # print(f"El Legajo {no} tiene el siguiente indice: {index}")
-        space = "    "
-        header = f"Legajo{space}Apellido{space}Nombre{space}Obra Social{space}Planta{space}Puesto{space}Sueldos B{space}Antigüedad en Años"
-        separator = ''.join(["_" for _ in range(100)])
-        values = f"{Legajo[i]}{space}{Apellido[i]}{space}{Nombre[i]}{space}{Obra_Social[i]}{space}{Planta[i]}{space}{Puesto[i]}{space}{sueldo_dict[Puesto[i]]}{space}{space}{count_years_from_date(Fecha_Ing[i])}"
-        return header + "\n" + separator + "\n" + values
+        
+        # Defino el formato para alinear los valores
+        format_str = "{:<10}{:<15}{:<15}{:<13}{:<17}{:<15}{:<12}{:<10}"
+
+        encabezado = format_str.format("Legajo", "Apellido", "Nombre", "Obra Social", "Planta", "Puesto", "Sueldos B", "Antigüedad en Años")
+        separador = ''.join(["_" for _ in range(115)])
+        valores = format_str.format(
+            Legajo[i], Apellido[i], Nombre[i], Obra_Social[i], Planta[i],
+            Puesto[i], sueldo_dict[Puesto[i]], count_years_from_date(Fecha_Ing[i])
+        )
+        return encabezado + "\n" + separador + "\n" + valores
     except ValueError:
         print(f"El legajo {no} no esta en la lista.")
 
