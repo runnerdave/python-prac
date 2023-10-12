@@ -17,11 +17,14 @@ Planta = ["Bernal", "San Martin", "Pilar", "Moron", "Bernal", "Pilar", "Moron", 
 Puesto = ["Administrativo", "Ventas", "Ventas", "Recursos", "Ventas", "Cadete", "Administrativo", "Cadete", "Ingeniería", "Administrativo",
           "Administrativo", "Diseño", "Diseño", "Ventas", "Recursos", "Ventas", "Administrativo", "Administrativo", "Jefe de Sector"]
 sueldo = ["Cadete", 275000, "Ventas", 248000, "Administrativo", 301000,
-          "Diseño", 364000, "Jefe de Sector", 443000, "Recursos", 287000]
+          "Diseño", 364000, "Jefe de Sector", 443000, "Recursos", 287000, "Ingeniería", 300000]
 A_Jub = 0.11
 A_O_soc = 0.03
 A_Sind = 0.03
 A_ley1254 = 0.015
+
+# convierto la lista de sueldo a un diccionario para facilitar la busqueda
+sueldo_dict = {sueldo[i]: sueldo[i + 1] for i in range(0, len(sueldo), 2)}
 
 def count_years_from_date(date: str):
     input_date = datetime.strptime(date, "%d/%m/%Y")
@@ -32,24 +35,26 @@ def count_years_from_date(date: str):
         years_difference -= 1
     return years_difference
 
+
 def list_by_legajo_no(no: int):
     try:
-        # Get the index of the value
+        # obtengo el indice en el legajo
         i = Legajo.index(int(no))
         # print(f"El Legajo {no} tiene el siguiente indice: {index}")
         space = "    "
         header = f"Legajo{space}Apellido{space}Nombre{space}Obra Social{space}Planta{space}Puesto{space}Sueldos B{space}Antigüedad en Años"
         separator = ''.join(["_" for _ in range(100)])
-        values = f"{Legajo[i]}{space}{space}{Apellido[i]}{space}{Nombre[i]}{space}{Obra_Social[i]}{space}{space} {Planta[i]}{space} {sueldo[i]}{space}{sueldo[i+1]}{space}{space}{count_years_from_date(Fecha_Ing[i])}"
+        values = f"{Legajo[i]}{space}{Apellido[i]}{space}{Nombre[i]}{space}{Obra_Social[i]}{space}{Planta[i]}{space}{Puesto[i]}{space}{sueldo_dict[Puesto[i]]}{space}{space}{count_years_from_date(Fecha_Ing[i])}"
         return header + "\n" + separator + "\n" + values
     except ValueError:
         print(f"El legajo {no} no esta en la lista.")
 
-def list_by_planta(name):
+
+def list_by_planta(name: str):
     pass
 
 
-def list_by_year(name):
+def list_by_year(name: str):
     pass
 
 
@@ -59,16 +64,14 @@ def main():
     print("Consultar por Planta          (2)")
     print("Consultar por Año             (3)")
 
-    # Get user input
     option = input("Seleccione su opción:          ")
     if option == "1":
         legajo_no = input("Ingrese el número de Legajo a consultar: ")
         print(list_by_legajo_no(legajo_no))
-    
-
-    # Additional functionality can be added here
+    elif option == "2":
+        planta = input("Ingrese la Planta a consultar: ")
+        print(list_by_planta(planta))
 
 
 if __name__ == "__main__":
-    # This block will be executed if the script is run directly, not if it's imported as a module
     main()
